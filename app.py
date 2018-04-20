@@ -101,15 +101,7 @@ class Ui_MainWindow(object):
             print("finished")
             print(book_list)
 
-    def find_by_option(self):
-        text = str(self.selectoption.currentText())
-        text = "_".join(text.split())
-        print(text)
-        url = amazon_mining.populars[text]
-        print(url)
 
-    def find_by_url(self):
-        pass
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
