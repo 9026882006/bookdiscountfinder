@@ -1,8 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-import amazon_mining
+import mining
 from get_book_urls import fetch
 
-from get_book_details import get_details_for_book
+from get_book_details import get_details_from_amazon
 
 
 class Ui_MainWindow(object):
@@ -88,14 +88,14 @@ class Ui_MainWindow(object):
     def find_by_category(self):
         text = str(self.selecategory.currentText())
         text = "_".join(text.split())
-        url = amazon_mining.categories[text]
+        url = mining.amz_categories[text]
         results = fetch(url,self.headers)
         print(results)
         if not isinstance(results, str):
             book_list = []
             for book_url in results:
                 print(book_url)
-                bookDetails = get_details_for_book(book_url,self.headers)
+                bookDetails = get_details_from_amazon(book_url,self.headers,book_list)
                 book_list.append(bookDetails)
                 # send url and collect data
             print("finished")

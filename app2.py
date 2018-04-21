@@ -7,9 +7,18 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import sys
+import mining
+from get_book_details import get_details_from_amazon
+from get_book_details import get_details_from_snapdeal
+from get_book_urls import fetch_snapdeal, fetch_amazon
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+        self.headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'}
+
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(554, 548)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -61,21 +70,24 @@ class Ui_MainWindow(object):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
-
+        self.btnFindByCat.clicked.connect(self.find_by_category)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.projectname.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:18pt; font-weight:600;\">BOOK DISCOUNT FINDER</span></p></body></html>"))
-        self.category.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">Choose a category</span></p></body></html>"))
+        self.projectname.setText(_translate("MainWindow",
+                                            "<html><head/><body><p><span style=\" font-size:18pt; font-weight:600;\">BOOK DISCOUNT FINDER</span></p></body></html>"))
+        self.category.setText(_translate("MainWindow",
+                                         "<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">Choose a category</span></p></body></html>"))
         self.btnFindByCat.setText(_translate("MainWindow", "FIND"))
-        self.searchword.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+        self.searchword.setHtml(_translate("MainWindow",
+                                           "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+                                           "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+                                           "p, li { white-space: pre-wrap; }\n"
+                                           "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+                                           "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.selecategory.setItemText(0, _translate("MainWindow", "select a category"))
         self.selecategory.setItemText(1, _translate("MainWindow", "biographies and autobiographies"))
         self.selecategory.setItemText(2, _translate("MainWindow", "business strategies and management"))
@@ -89,15 +101,46 @@ class Ui_MainWindow(object):
         self.selecategory.setItemText(10, _translate("MainWindow", "art and photography"))
         self.btnSearchByName.setText(_translate("MainWindow", "Search"))
         self.label_2.setText(_translate("MainWindow", "searching...."))
-        self.label_3.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:11pt; font-weight:600;\">Status</span></p></body></html>"))
+        self.label_3.setText(_translate("MainWindow",
+                                        "<html><head/><body><p><span style=\" font-size:11pt; font-weight:600;\">Status</span></p></body></html>"))
+
+    # main code
+    def find_by_category(self):
+        try:
+            text = str(self.selecategory.currentText())
+            text = "_".join(text.split())
+            url = mining.amz_categories.get(text)
+            url_2 = mining.snapdeal_categories.get(text)
+            results = fetch_amazon(url, self.headers)
+            #results_2 = fetch_snapdeal(url_2, self.headers)
+            book_list = []
+            if not isinstance(results, str):
+                for book_url in results:
+                    book_list = get_details_from_amazon(book_url, self.headers, book_list)
+                print(book_list)
+            else:
+                self.label_3.setText("there was an error fetching data from amazon")
+            # if not isinstance(results2, str):
+            #     for book_url in results_2:
+            #         book_list = get_details_from_snapdeal(book_url, self.headers, book_list)
+            #     print(book_list)
+            # else:
+            #     self.label_3.setText("there was an error fetching data from amazon")
+            if book_list:
+                # save data in pandas
+                self.label_3.setText("completed fetching data")
+            else:
+                self.label_3.setText("check you internet")
+        except Exception as e:
+            self.label_3.setText(str(e))
 
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-

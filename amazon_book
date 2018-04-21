@@ -1,0 +1,27 @@
+title
+    #ebooksProductTitle
+    #productTitle
+author
+    .contributorNameID
+rating
+    #acrPopover title
+review_count
+    #acrCustomerReviewText
+selling_price
+    #unqualifiedBuyBox > div > div.a-text-center.a-spacing-mini > span
+    #buybox > div > table > tbody > tr.kindle-price > td.a-color-price
+old_price
+    #buybox > div > table > tbody > tr.digital-list-price > td.a-align-bottom > span
+discount
+    #buybox > div > table > tbody > tr.kindle-price > td.a-color-price.a-size-medium.a-align-bottom > p
+format options
+    #showMoreFormatsPrompt
+format option link
+    #formats > a
+format container
+    #formats
+format title
+
+    #declarative_1 > table > tbody > tr > td.dp-title-col
+    #declarative_1 > table > tbody > tr > td.a-text-right.dp-price-col
+    #declarative_2 > table > tbody > tr > td.a-text-right.dp-new-col
