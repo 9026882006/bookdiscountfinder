@@ -1,0 +1,27 @@
+
+title
+    #productOverview > div > div > div > div > div > h1
+author
+    div.spec-body > div.detailssubbox
+rating
+    div.filled-stars
+    span.avrg-rating
+review_count
+    span.total-rating.showRatingTooltip
+selling_price
+    span.pdp-final-price > spaN.payBlkBig
+old_price
+    div.pdpCutPrice
+discount
+    span.pdpDiscount>span
+format options
+    #showMoreFormatsPrompt
+format option link
+    #formats > a
+format container
+    #formats
+format title
+
+    #declarative_1 > table > tbody > tr > td.dp-title-col
+    #declarative_1 > table > tbody > tr > td.a-text-right.dp-price-col
+    #declarative_2 > table > tbody > tr > td.a-text-right.dp-new-col
