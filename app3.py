@@ -5,6 +5,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import mining
 from get_book_details import get_details_from_amazon, get_details_from_snapdeal
 from get_book_urls import fetch_amazon, fetch_snapdeal
+from plotter import Ui_dialog
 
 
 class Ui_MainWindow(object):
@@ -111,25 +112,25 @@ class Ui_MainWindow(object):
                                            "p, li { white-space: pre-wrap; }\n"
                                            "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
                                            "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
-        self.selecategory.setItemText(0, _translate("MainWindow", "select a category"))
-        self.selecategory.setItemText(1, _translate("MainWindow", "biographies and autobiographies"))
-        self.selecategory.setItemText(2, _translate("MainWindow", "business strategies and management"))
-        self.selecategory.setItemText(3, _translate("MainWindow", "crime, thriller and mystery"))
-        self.selecategory.setItemText(4, _translate("MainWindow", "personal development and self help"))
-        self.selecategory.setItemText(5, _translate("MainWindow", "fantasy"))
-        self.selecategory.setItemText(6, _translate("MainWindow", "exam preparation"))
-        self.selecategory.setItemText(7, _translate("MainWindow", "romance"))
-        self.selecategory.setItemText(8, _translate("MainWindow", "historical fiction"))
-        self.selecategory.setItemText(9, _translate("MainWindow", "children\'s book"))
-        self.selecategory.setItemText(10, _translate("MainWindow", "art and photography"))
+        self.selecategory.setItemText(0, _translate("MainWindow", "Select a category"))
+        self.selecategory.setItemText(1, _translate("MainWindow", "Biographies & Autobiographies"))
+        self.selecategory.setItemText(2, _translate("MainWindow", "Business Strategies & Management"))
+        self.selecategory.setItemText(3, _translate("MainWindow", "Crime, Thriller & Mystery"))
+        self.selecategory.setItemText(4, _translate("MainWindow", "Personal Development & Self Help"))
+        self.selecategory.setItemText(5, _translate("MainWindow", "Fantasy"))
+        self.selecategory.setItemText(6, _translate("MainWindow", "Exam Preparation"))
+        self.selecategory.setItemText(7, _translate("MainWindow", "Romance"))
+        self.selecategory.setItemText(8, _translate("MainWindow", "Historical Fiction"))
+        self.selecategory.setItemText(9, _translate("MainWindow", "Children\'s Book"))
+        self.selecategory.setItemText(10, _translate("MainWindow", "Art & Photography"))
         self.btnSearchByName.setText(_translate("MainWindow", "Search"))
         self.label_2.setText(_translate("MainWindow", "Type a Name of Book"))
         self.label_3.setText(_translate("MainWindow", "<html><head/><body><p><br/></p></body></html>"))
-        self.label_4.setText(_translate("MainWindow", " click search to start the web spider and wait for completion"))
+        self.label_4.setText(_translate("MainWindow", " Click search to start the web spider and wait for completion."))
         self.recentBtn.setText(_translate("MainWindow", "Recent Search Results"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionSchedule_Crawler.setText(_translate("MainWindow", "Schedule Crawler"))
-        self.actionExit.setText(_translate("MainWindow", "exit"))
+        self.actionExit.setText(_translate("MainWindow", "Exit"))
 
     # main code
     def closeapp(self):
@@ -164,8 +165,9 @@ class Ui_MainWindow(object):
                 df = pd.DataFrame(book_list)
                 current_day = time.strftime("%d_%m_%Y")
                 csv_file = text + '_' + current_day + ".csv"
-                df.to_csv(csv_file)
-                pickle.dump({'path':csv_file}, open("recent.p", "wb"))
+                df.to_csv(csv_file, encoding='utf-8')
+                self.plotgraph(df)
+                pickle.dump({'path': csv_file}, open("recent.p", "wb"))
 
                 self.label_3.setText("completed task, saved to " + csv_file)
             else:
@@ -174,8 +176,17 @@ class Ui_MainWindow(object):
             self.label_3.setText(str(e))
 
     def load_recent_run(self):
-        csv_file=pickle.load(open("recent.p", "rb"))
+        csv_file = pickle.load(open("recent.p", "rb"))
         file_path = csv_file['path']
+
+
+    def plotgraph(self, df):
+        dialog = QtWidgets.QDialog()
+        dialog.ui = Ui_dialog()
+        dialog.ui.setupUi(dialog)
+        dialog.ui.plot(df, "Price")
+        dialog.exec_()
+        dialog.show()
 
 
 if __name__ == "__main__":
